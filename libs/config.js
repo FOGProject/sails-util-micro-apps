@@ -22,7 +22,11 @@ module.exports = function (sails, dir) {
     configs = _.reduce(configs, (_configs, o, k)=>_.merge(_configs, o) );
     // sails.log.debug('configs: ', configs);
 
-    sails.config = _.merge(configs, sails.config, (a, b) => _.isArray(a) ? a.concat(b) : undefined);
+    if (configs.afterSailsConfig) {
+      sails.config = _.mergeWith(sails.config, configs, (a, b) => _.isArray(a) ? a.concat(b) : undefined);
+    } else {
+      sails.config = _.mergeWith(configs, sails.config, (a, b) => _.isArray(a) ? a.concat(b) : undefined);
+    }
 
     // Using this hack to reset and bind our policies to router
     // sails.log.debug('action middleware: ', sails._actionMiddleware);
