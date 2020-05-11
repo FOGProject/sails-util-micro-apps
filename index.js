@@ -147,26 +147,6 @@ module.exports = function(sails, hook_dirname) {
         });
       };
 
-      var loadViews = function(next) {
-        self.injectViews(dir.views, function(err) {
-          if (err) {
-            return next(err);
-          }
-          sails.log.info('Micro-app-loader: User hook views loaded from ' + dir.views + '.');
-          return next(null);
-        });
-      };
-
-      var loadAssets = function(next) {
-        self.injectViews(dir.assets, function(err) {
-          if (err) {
-            return next(err);
-          }
-          sails.log.info('Micro-app-loader: User hook assets loaded from ' + dir.assets + '.');
-          return next(null);
-        });
-      };
-
       // sails.log.debug('dirs: ', dir);
 
       // we should add dependant hooks early during config before hooks are initialized
@@ -183,6 +163,16 @@ module.exports = function(sails, hook_dirname) {
       if (dir.config) {
         self.injectConfig(dir.config);
         sails.log.info('Micro-app-loader: User hook config loaded from ' + dir.config + '.');
+      }
+
+      if (dir.views) {
+        self.injectViews(dir.views);
+        sails.log.info('Micro-app-loader: User hook config loaded from ' + dir.views + '.');
+      }
+
+      if (dir.assets) {
+        self.injectAssets(dir.assets);
+        sails.log.info('Micro-app-loader: User hook config loaded from ' + dir.assets + '.');
       }
 
       var toLoad = [];
