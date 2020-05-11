@@ -29,6 +29,7 @@ module.exports = function(sails, hook_dirname) {
     injectPolicies: function(dir) {
       require(__dirname + '/libs/policies')(sails, dir);
     },
+
     injectConfig: function(dir) {
       require(__dirname + '/libs/config')(sails, dir);
     },
@@ -49,13 +50,23 @@ module.exports = function(sails, hook_dirname) {
       require(__dirname + '/libs/helpers')(sails, dir, cb);
     },
 
+    injectViews: function(dir, cb) {
+      require(__dirname + '/libs/views')(sails, dir, cb);
+    },
+
+    injectAssets: function(dir, cb) {
+      require(__dirname + '/libs/assets')(sails, dir, cb);
+    },
+
     // Inject hooks, config and policies synchronously into the Sails app
     configure: function(dir) {
       if (!dir) {
         dir = {
           hooks: hook_dirname,
           config: hook_dirname + '/config',
-          policies: hook_dirname + '/api/policies'
+          policies: hook_dirname + '/api/policies',
+          assets: hook_dirname + '/assets',
+          views: hook_dirname + '/views'
         };
       }
       this.injectAll(dir);
@@ -73,7 +84,6 @@ module.exports = function(sails, hook_dirname) {
           controllers: hook_dirname + '/api/controllers',
           helpers: hook_dirname + '/api/helpers',
           services: hook_dirname + '/api/services'
-
         };
       }
 
@@ -137,6 +147,25 @@ module.exports = function(sails, hook_dirname) {
         });
       };
 
+      var loadViews = function(next) {
+        self.injectViews(dir.views, function(err) {
+          if (err) {
+            return next(err);
+          }
+          sails.log.info('Micro-app-loader: User hook views loaded from ' + dir.views + '.');
+          return next(null);
+        });
+      };
+
+      var loadAssets = function(next) {
+        self.injectViews(dir.assets, function(err) {
+          if (err) {
+            return next(err);
+          }
+          sails.log.info('Micro-app-loader: User hook assets loaded from ' + dir.assets + '.');
+          return next(null);
+        });
+      };
 
       // sails.log.debug('dirs: ', dir);
 
