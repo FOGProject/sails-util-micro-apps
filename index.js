@@ -1,7 +1,8 @@
 const async = require('async'),
-      path = require('path'),
-      util = require('util'),
-      decache = require('decache');
+  path = require('path'),
+  util = require('util'),
+  decache = require('decache'),
+  appDir = process.env.PWD;
 
 module.exports = function(sails, hook_dirname) {
   // make sure we don't cache this module, caching is preventing hook_dirname detection from working properly
@@ -30,6 +31,14 @@ module.exports = function(sails, hook_dirname) {
       require(__dirname + '/libs/policies')(sails, dir);
     },
 
+    injectViews: function(dir) {
+      require(__dirname + '/libs/views')(sails, dir, appDir);
+    },
+
+    injectAssets: function(dir) {
+      require(__dirname + '/libs/assets')(sails, dir, appDir);
+    },
+
     injectConfig: function(dir) {
       require(__dirname + '/libs/config')(sails, dir);
     },
@@ -48,14 +57,6 @@ module.exports = function(sails, hook_dirname) {
 
     injectHelpers: function(dir, cb) {
       require(__dirname + '/libs/helpers')(sails, dir, cb);
-    },
-
-    injectViews: function(dir, cb) {
-      require(__dirname + '/libs/views')(sails, dir, cb);
-    },
-
-    injectAssets: function(dir, cb) {
-      require(__dirname + '/libs/assets')(sails, dir, cb);
     },
 
     // Inject hooks, config and policies synchronously into the Sails app
